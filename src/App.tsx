@@ -1,24 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route} from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+
+import ThemeProvider from "./providers/theme-provider";
+import Newsline from "./pages/news-line";
+import Theme from "./pages/theme";
+import MainLayout from "./layouts";
+
+import "./styles/app.css";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="wrapper">
+      <Provider store={store}>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<MainLayout/>}>
+              <Route index element={<Newsline />} />
+              <Route path="/themes" element={<Theme />} />
+            </Route>
+          </Routes>
+        </ThemeProvider>
+      </Provider>
     </div>
   );
 }

@@ -1,0 +1,13 @@
+.icon {
+    width: 25px;
+    height: 25px;
+    fill: var(--text-color)
+}
+
+.navigation {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    column-gap: 30px;
+}
