@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useDispatch } from "react-redux";
 import PullToRefresh from "react-simple-pull-to-refresh";
 
 import { newsApi } from "../../redux/api/news/news";
 import { useGetNewsQuery } from "../../redux/api/news/news";
-import type { New } from "../../redux/types";
 
-import NewItem from "../../components/news-item";
+import AsyncNews from "../../components/asyncNews";
+import StoreNews from "../../components/storeNews";
 
 import { ReactComponent as Loader } from "../../assets/img/oval.svg";
 import { ReactComponent as Update } from "../../assets/img/update.svg";
@@ -24,13 +24,6 @@ const Newsline = () => {
   const [localData, setLocalData] = useLocalStorage("news", "");
   const dispatch = useDispatch();
   const news = data ?? [];
-
-  const asyncNews = news?.map((newItem) => {
-    return <NewItem key={newItem.id} {...newItem} />;
-  });
-  const storeNews = localNews?.map((newItem: New) => {
-    return <NewItem key={newItem.id} {...newItem} />;
-  });
 
   const refreshNews = async () => {
     window.scrollTo({
@@ -87,8 +80,8 @@ const Newsline = () => {
         >
           <div>
             {localData === ""
-              ? asyncNews
-              : storeNews}
+              ? <AsyncNews news={news}/>
+              : <StoreNews news={localNews}/>}
           </div>
         </PullToRefresh>
         <div className={styles.loader}>

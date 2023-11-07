@@ -1,7 +1,5 @@
 @import url('./normilize.css');
 
-
-
 .wrapper {
     min-height: 100vh;
     background-color: var(--second-color);
