@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { useDispatch } from "react-redux";
 import PullToRefresh from "react-simple-pull-to-refresh";
@@ -19,17 +19,16 @@ import styles from "./news-line.module.css";
 const Newsline = () => {
   const [page, setPage] = React.useState(1);
   const [localNews, setLocalNews] = React.useState([]);
-  const { data, isFetching, refetch } =
-    useGetNewsQuery(page);
+  const { data, isFetching, refetch } = useGetNewsQuery(page);
   const [localData, setLocalData] = useLocalStorage("news", "");
   const dispatch = useDispatch();
   const news = data ?? [];
 
-  const refreshNews = async () => {
+  const refreshNews = React.useCallback(async () => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
 
     setLocalData("");
@@ -37,12 +36,12 @@ const Newsline = () => {
     dispatch(newsApi.util.resetApiState());
 
     await refetch();
-  };
+  }, []);
 
   React.useEffect(() => {
     if (localData !== "") {
       const news = JSON.parse(localData) ?? [];
-      setLocalNews(news);
+      setLocalNews((prev) => (prev = news));
     }
   }, [data]);
 
@@ -53,12 +52,11 @@ const Newsline = () => {
         document.body.offsetHeight;
 
       if (scrolledToBottom && !isFetching) {
-        console.log("Fetching more data...");
-        setPage(page + 1);
+        setPage((prev) => prev + 1);
         setLocalData(JSON.stringify(data));
       }
     };
-   
+
     document.addEventListener("scroll", onScroll);
 
     return function () {
@@ -76,12 +74,16 @@ const Newsline = () => {
               <ArrowPullToRefresh className={styles.iconPTR} />
             </div>
           }
-          refreshingContent={<LoadingPullToRefresh className={styles.iconPTR} />}
+          refreshingContent={
+            <LoadingPullToRefresh className={styles.iconPTR} />
+          }
         >
           <div>
-            {localData === ""
-              ? <AsyncNews news={news}/>
-              : <StoreNews news={localNews}/>}
+            {localData === "" ? (
+              <AsyncNews news={news} />
+            ) : (
+              <StoreNews news={localNews} />
+            )}
           </div>
         </PullToRefresh>
         <div className={styles.loader}>
